@@ -13,6 +13,7 @@ Site example.dev is cloned as site example.test, and the test suite is triggered
 - Unlike the SUT Drupal Test Suite that has to do expensive and time consuming preparing of variables like (enabled modules, enabled features)
 because we went with ACS. We dont have to waste valuable stakeholder time.
 
+c.) Primary Use Case is d7, its my day to day work.
 
 Usage
 --------
