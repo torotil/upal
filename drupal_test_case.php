@@ -2443,6 +2443,9 @@ class DrupalWebTestCase extends DrupalTestCase {
 	require_once DRUPAL_ROOT . '/includes/bootstrap.inc';
     }
     drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
+    
+    // Use the test mail class instead of the default mail handler class.
+    variable_set('mail_system', array('default-system' => 'TestingMailSystem'));    
   }
 }
 
