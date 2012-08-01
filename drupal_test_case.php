@@ -2414,82 +2414,6 @@ class DrupalWebTestCase extends DrupalTestCase {
   public function setUp() {
     parent::setUp();
 
-    if (!defined('DRUPAL_ROOT')) {
-      define('DRUPAL_ROOT', UPAL_ROOT);
-    }
-    $site = DRUPAL_ROOT . '/sites/upal';
-
-    // Restore virgin files directory.
-    $files_dir = "$site/files";
-    if (file_exists($files_dir)) {
-      exec(sprintf('cd %s && rm -rf', escapeshellarg($files_dir)), $output, $return);
-    }
-    else {
-      mkdir("$site/files", 0777, TRUE);
-    }
-    // For some reason I need a chmod() as well.
-    chmod("$site/files", 0777);
-
-    $db = parse_url(UPAL_DB_URL);
-
-    // Attempt to make settings.php writable.
-    if (file_exists("$site/settings.php") && !is_writable("$site/settings.php")) {
-      chmod("$site/settings.php", 0666);
-    }
-
-    // Overwrite settings.php every time, since DB credentials can change.
-    if (!file_exists("$site/settings.php") || is_writable("$site/settings.php")) {
-      $byline = '// Written by the Upal Test Framework. See DrupalWebTestCase::setUp().';
-      $db_array = array(
-        'driver' => $db['scheme'],
-        'database' => trim($db['path'], '/'),
-        'username' => @$db['user'],
-        'password' => @$db['pass'],
-        'host' => $db['host'],
-        'port' => @$db['port'],
-      );
-      $conf = "\$conf['blocked_ips'] = array();";
-      $databases = "\$databases['default']['default'] = " . var_export($db_array, TRUE) . ';';
-      $data = "<?php\n\n$byline\n$databases\n\n$conf\n\n?>";
-      file_put_contents("$site/settings.php", $data);
-    }
-
-    $source = $this->directory_cache('db_dumps') . '/' . $this->profile . '.sql';
-    // DB Dump/restore disabled for the moment.
-    if (0 && file_exists($source)) {
-      $this->log('Cache HIT. Profile: ' . $source, 'verbose');
-
-      // Assure that we start with an empty database. Will create one if needed.
-      $cmd = sprintf('%s --db-url=%s --uri=upal --root=%s eval "drush_sql_empty_db();"', UNISH_DRUSH, UPAL_DB_URL, UPAL_ROOT);
-      if (exec($cmd, $output, $return)) {
-        exit('Failed to empty DB.');
-      }
-
-      // Import cached DB dump.
-      $cmd = sprintf('`%s sql-connect` < %s', UNISH_DRUSH, $source);
-      if (exec($cmd, $output, $return)) {
-        exit('Failed to import DB.');
-      }
-    }
-    else {
-      $this->log('Cache MISS. Profile: ' . $source, 'verbose');
-      $cmd = sprintf('%s site-install --yes --verbose --uri=upal --sites-subdir=upal --root=%s %s', UNISH_DRUSH, UPAL_ROOT, $this->profile);
-      // die($cmd);
-      if (!exec($cmd, $output, $return)) {
-        exit('Failed to empty DB.');
-      }
-      // Give us our write perms back.
-      chmod($site, 0777);
-      // Cache the DB for later runs.
-      if (!file_exists(dirname($source))) {
-        mkdir(dirname($source), 0777, TRUE);
-      }
-      $cmd = sprintf('%s sql-dump --uri=upal --root=%s --result-file=%s', UNISH_DRUSH, UPAL_ROOT, $source);
-      // if (!exec($cmd, $output, $return)) {
-      //  exit('Failed to write sql-dump to cache directory.');
-      // }
-    }
-
     // Make sure we run against Upal specified database.
     //$drupal_base_url = parse_url(UPAL_WEB_URL);
     //$_SERVER['HTTP_HOST'] = $drupal_base_url['host'];
@@ -2519,18 +2443,6 @@ class DrupalWebTestCase extends DrupalTestCase {
 	require_once DRUPAL_ROOT . '/includes/bootstrap.inc';
     }
     drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
-
-    // Enable modules for this test.
-    $modules = func_get_args();
-    if (isset($modules[0]) && is_array($modules[0])) {
-      $modules = $modules[0];
-    }
-    if ($modules) {
-      module_enable($modules, TRUE);
-    }
-
-    // Use the test mail class instead of the default mail handler class.
-    variable_set('mail_system', array('default-system' => 'TestingMailSystem'));
   }
 }
 
