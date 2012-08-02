@@ -2454,8 +2454,17 @@ class DrupalWebTestCase extends DrupalTestCase {
 function upal_init() {
   define('DRUPAL_CORE_VERSION', getenv('DRUPAL_CORE_VERSION') ? getenv('DRUPAL_CORE_VERSION') :(isset($GLOBALS['DRUPAL_CORE_VERSION']) ? $GLOBALS['DRUPAL_CORE_VERSION'] : "7"));
   define('DRUPAL_SITE_URL', getenv('DRUPAL_SITE_URL') ? getenv('DRUPAL_SITE_URL') :(isset($GLOBALS['DRUPAL_SITE_URL']) ? $GLOBALS['DRUPAL_SITE_URL'] : ''));
+  // Set the env vars that Drupal expects. Largely copied from drush.
+  $url = parse_url(DRUPAL_SITE_URL);
+
+  if (array_key_exists('path', $url)) {
+    $_SERVER['PHP_SELF'] = $url['path'] . '/index.php';
+  }
+  else {
+    $_SERVER['PHP_SELF'] = '/index.php';
+  }  
   $_SERVER['HTTP_HOST'] = DRUPAL_SITE_URL;
-  $_SERVER['PHP_SELF'] = DRUPAL_SITE_URL . '/index.php';
+  $_SERVER['PHP_SELF'] =  '/index.php';
   $_SERVER['REQUEST_URI'] = $_SERVER['SCRIPT_NAME'] = $_SERVER['PHP_SELF'];
   $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
   $_SERVER['REQUEST_METHOD']  = NULL;
