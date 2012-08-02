@@ -2516,4 +2516,4 @@ function upal_init() {
 
  // This code is in global scope.
  // TODO: I would rather this code at top of file, but I get Fatal error: Class 'Drush_TestCase' not found
- upal_init();
+ // upal_init();
