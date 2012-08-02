@@ -2391,12 +2391,9 @@ abstract class DrupalTestCase extends PHPUnit_Framework_TestCase {
 class DrupalUnitTestCase extends DrupalTestCase {
   function setUp() {
     parent::setUp();
-
-    if (!defined('DRUPAL_ROOT')) {
-      define('DRUPAL_ROOT', UPAL_ROOT);
-    }
+    define('DRUPAL_ROOT', dirname(__FILE__));
     if (!defined("DRUPAL_CORE_VERSION")) {
-      define('DRUPAL_CORE_VERSION', "8");
+      define('DRUPAL_CORE_VERSION', "7");
     }
 
     if (DRUPAL_CORE_VERSION == "7") {
@@ -2432,16 +2429,18 @@ class DrupalWebTestCase extends DrupalTestCase {
     //$_SERVER['REQUEST_METHOD']  = NULL;
     //$_SERVER['SERVER_SOFTWARE'] = NULL;
     //$_SERVER['HTTP_USER_AGENT'] = NULL;
+    define('DRUPAL_ROOT', dirname(__FILE__));
     if (!defined('DRUPAL_CORE_VERSION')) {
-	define('DRUPAL_CORE_VERSION', "8");
+	     define('DRUPAL_CORE_VERSION', "7");
     }
 
     if (DRUPAL_CORE_VERSION == "7") {
-	require_once DRUPAL_ROOT . '/includes/bootstrap.inc';
+	    require_once DRUPAL_ROOT . '/includes/bootstrap.inc';
     }
     else {
-	require_once DRUPAL_ROOT . '/includes/bootstrap.inc';
+	    require_once DRUPAL_ROOT . 'core/includes/bootstrap.inc';
     }
+
     drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
     
     // Use the test mail class instead of the default mail handler class.
