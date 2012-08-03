@@ -2390,8 +2390,10 @@ abstract class DrupalTestCase extends PHPUnit_Framework_TestCase {
 
 class DrupalUnitTestCase extends DrupalTestCase {
   function setUp() {
-    parent::setUp();
-    define('DRUPAL_ROOT', dirname(__FILE__));
+    upal_init();        
+    if (!defined("DRUPAL_ROOT")) {
+      define('DRUPAL_ROOT', dirname(__FILE__));
+    }    
     if (!defined("DRUPAL_CORE_VERSION")) {
       define('DRUPAL_CORE_VERSION', "7");
     }
@@ -2403,33 +2405,16 @@ class DrupalUnitTestCase extends DrupalTestCase {
     else {
     	require_once DRUPAL_ROOT . '/core/includes/bootstrap.inc';
     }
-    drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
+    drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);    
   }
 }
 
 class DrupalWebTestCase extends DrupalTestCase {
   public function setUp() {
-    parent::setUp();
-
-    // Make sure we run against Upal specified database.
-    //$drupal_base_url = parse_url(UPAL_WEB_URL);
-    //$_SERVER['HTTP_HOST'] = $drupal_base_url['host'];
-    //if (!empty($drupal_base_url['port'])) {
-    //  $_SERVER['HTTP_HOST'] .= ':' . $drupal_base_url['port'];
-    //  $_SERVER['SERVER_PORT'] = $drupal_base_url['port'];
-    //}
-    //if (array_key_exists('path', $drupal_base_url)) {
-    //  $_SERVER['PHP_SELF'] = $drupal_base_url['path'] . '/index.php';
-    //}
-    //else {
-    //  $_SERVER['PHP_SELF'] = '/index.php';
-    //}
-    //$_SERVER['REQUEST_URI'] = $_SERVER['SCRIPT_NAME'] = $_SERVER['PHP_SELF'];
-    //$_SERVER['REMOTE_ADDR'] = '127.0.0.1';
-    //$_SERVER['REQUEST_METHOD']  = NULL;
-    //$_SERVER['SERVER_SOFTWARE'] = NULL;
-    //$_SERVER['HTTP_USER_AGENT'] = NULL;
-    define('DRUPAL_ROOT', dirname(__FILE__));
+    upal_init();    
+    if (!defined("DRUPAL_ROOT")) {
+      define('DRUPAL_ROOT', dirname(__FILE__));
+    }
     if (!defined('DRUPAL_CORE_VERSION')) {
 	     define('DRUPAL_CORE_VERSION', "7");
     }
@@ -2456,7 +2441,6 @@ function upal_init() {
   define('DRUPAL_SITE_URL', getenv('DRUPAL_SITE_URL') ? getenv('DRUPAL_SITE_URL') :(isset($GLOBALS['DRUPAL_SITE_URL']) ? $GLOBALS['DRUPAL_SITE_URL'] : ''));
   // Set the env vars that Drupal expects. Largely copied from drush.
   $url = parse_url(DRUPAL_SITE_URL);
-
   if (array_key_exists('path', $url)) {
     $_SERVER['PHP_SELF'] = $url['path'] . '/index.php';
   }
@@ -2474,4 +2458,4 @@ function upal_init() {
 
  // This code is in global scope.
  // TODO: I would rather this code at top of file, but I get Fatal error: Class 'Drush_TestCase' not found
- upal_init();
+// upal_init();
