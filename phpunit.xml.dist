@@ -1,8 +1,7 @@
 <!-- Copy and rename to phpunit.xml. Customize as needed. -->
 <phpunit backupGlobals="false"
     backupStaticAttributes="false"
-    syntaxCheck="false"
-    bootstrap="drupal_test_case.php">
+    syntaxCheck="false">
   <php>
     <!-- These variables may alternatively be set as bash environment variables. -->
 
