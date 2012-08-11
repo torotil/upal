@@ -2303,7 +2303,7 @@ abstract class DrupalTestCase extends PHPUnit_Framework_TestCase {
   protected function refreshVariables() {
     global $conf;
     if (!defined('DRUPAL_CORE_VERSION')) {
-    	define('DRUPAL_CORE_VERSION', "8");
+    	define('DRUPAL_CORE_VERSION', "7");
     }   
 
 
