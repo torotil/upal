@@ -2302,17 +2302,8 @@ abstract class DrupalTestCase extends PHPUnit_Framework_TestCase {
    */
   protected function refreshVariables() {
     global $conf;
-    if (!defined('DRUPAL_CORE_VERSION')) {
-    	define('DRUPAL_CORE_VERSION', "7");
-    }   
 
-
-    if (DRUPAL_CORE_VERSION == "7") {
-	cache_clear_all('variables', 'cache_bootstrap');
-    }
-    else {
-	cache('bootstrap')->delete('variables');
-    }
+    cache_clear_all('variables', 'cache_bootstrap');
     $conf = variable_initialize();
   }
 
@@ -2379,7 +2370,11 @@ abstract class DrupalTestCase extends PHPUnit_Framework_TestCase {
   }
 
   function directory_cache($subdir = '') {
-    return getenv('CACHE_PREFIX') . '/' . $subdir;
+    $dir = UPAL_TMP . '/' . $subdir;
+    if (!file_exists($dir)) {
+      drupal_mkdir($dir, NULL, TRUE);
+    }
+    return $dir;
   }
 
 //  function db_url($env) {
@@ -2390,22 +2385,46 @@ abstract class DrupalTestCase extends PHPUnit_Framework_TestCase {
 
 class DrupalUnitTestCase extends DrupalTestCase {
   function setUp() {
-    upal_init();        
+    upal_init();
     if (!defined("DRUPAL_ROOT")) {
       define('DRUPAL_ROOT', UPAL_ROOT);
-    }    
-    if (!defined("DRUPAL_CORE_VERSION")) {
-      define('DRUPAL_CORE_VERSION', "7");
     }
 
-    if (DRUPAL_CORE_VERSION == "7") {
-    	require_once DRUPAL_ROOT . '/includes/bootstrap.inc';
+    require_once DRUPAL_ROOT . '/includes/bootstrap.inc';
+    drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
+  }
+}
+
+class DrupalIntegratedWebTestCase extends DrupalUnitTestCase {
+  protected static $dump = NULL;
+  public function setUp() {
+    parent::setUp();
+    if (!self::$dump) {
+      self::$dump = $this->directory_cache('db_dumps') . '/' . basename(conf_path()) . '-' . REQUEST_TIME . '.sql';
     }
-    // Assume D8
-    else {
-    	require_once DRUPAL_ROOT . '/core/includes/bootstrap.inc';
+    if (!file_exists(self::$dump)) {
+      $cmd = sprintf('%s sql-dump --uri=%s --root=%s --result-file=%s', UNISH_DRUSH, UPAL_WEB_URL, UPAL_ROOT, self::$dump);
+      exec($cmd, $output, $return);
+      if ($return) {
+        echo "Failed to create database backup.\n";
+        echo $output;
+        exit(1);
+      }
     }
-    drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);    
+ 
+    // Use the test mail class instead of the default mail handler class.
+    variable_set('mail_system', array('default-system' => 'TestingMailSystem'));
+  }
+  
+  public function tearDown() {
+    $cmd = sprintf('`%s sql-connect --uri=%s --root=%s` < %s', UNISH_DRUSH, UPAL_WEB_URL, UPAL_ROOT, self::$dump);
+    exec($cmd, $output, $return);
+    if ($return) {
+      echo "Failed to restore the database backup.\n";
+      echo $output;
+      exit(1);
+    }
+    parent::tearDown();
   }
 }
 
@@ -2415,17 +2434,8 @@ class DrupalWebTestCase extends DrupalTestCase {
     if (!defined("DRUPAL_ROOT")) {
       define('DRUPAL_ROOT', UPAL_ROOT);
     }
-    if (!defined('DRUPAL_CORE_VERSION')) {
-	     define('DRUPAL_CORE_VERSION', "7");
-    }
 
-    if (DRUPAL_CORE_VERSION == "7") {
-	    require_once DRUPAL_ROOT . '/includes/bootstrap.inc';
-    }
-    else {
-	    require_once DRUPAL_ROOT . 'core/includes/bootstrap.inc';
-    }
-
+    require_once DRUPAL_ROOT . '/includes/bootstrap.inc';
     drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
     
     // Use the test mail class instead of the default mail handler class.
@@ -2458,8 +2468,6 @@ function upal_init() {
 
   // The URL that browser based tests should use.
   define('UPAL_WEB_URL', getenv('UPAL_WEB_URL') ? getenv('UPAL_WEB_URL') : (isset($GLOBALS['UPAL_WEB_URL']) ? $GLOBALS['UPAL_WEB_URL'] : 'http://upal'));
-
-  define('DRUPAL_CORE_VERSION', getenv('DRUPAL_CORE_VERSION') ? getenv('DRUPAL_CORE_VERSION') :(isset($GLOBALS['DRUPAL_CORE_VERSION']) ? $GLOBALS['DRUPAL_CORE_VERSION'] : "8"));
 
   define('UPAL_TMP', getenv('UPAL_TMP') ? getenv('UPAL_TMP') : (isset($GLOBALS['UPAL_TMP']) ? $GLOBALS['UPAL_TMP'] : sys_get_temp_dir()));
   // define('UNISH_SANDBOX', UNISH_TMP . '/drush-sandbox');
