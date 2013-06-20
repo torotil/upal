@@ -2447,6 +2447,9 @@ class DrupalWebTestCase extends DrupalTestCase {
  * Initialize our environment at the start of each run (i.e. suite).
  */
 function upal_init() {
+  static $has_run = FALSE;
+  if ($has_run) { return; }
+  $has_run = TRUE;
   // UNISH_DRUSH value can come from phpunit.xml or `which drush`.
   if (!defined('UNISH_DRUSH')) {
     // Let the UNISH_DRUSH environment variable override if set.
