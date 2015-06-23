@@ -1,19 +1,12 @@
-'Assume Clone Site' Drupal's test suite based on PHPUnit (http://www.phpunit.de/).
+This is a fork of the (now discontinued) upal project for Drupal 7.
 
+The main goal is to provide a test framwork that …
 
-a.) SUT 'System Under Test' concept is a direct obstacle to fast iteration; The idea of creating a pseudo database schema and
-pseudo site install through prefixing does not scale. This concept caters to Drupal Mom and Pop sites that dont have the resources of a 
-functioning (dev|test)->staging->prod infrastructure.
+- … is *fast enough* to do test driven development for drupal modules.
+- … can be used to *test basic business use-cases in staging environments* (ie. live site clones).
+- … is compatible with *popular CI-tools* like Jenkins and TravisCI.
 
-b.) Test Suite is ACS 'Assume Clone Site'. We assume this test suite will be executed on a cloned site already.
-
-Site example.dev is cloned as site example.test, and the test suite is triggered at the cloned example.test site.
-
-- Hence we have no worries about creating demo content, database objects.
-- Unlike the SUT Drupal Test Suite that has to do expensive and time consuming preparing of variables like (enabled modules, enabled features)
-because we went with ACS. We dont have to waste valuable stakeholder time.
-
-c.) Primary Use Case is D7, its my day to day work.
+upal assumes that tests are allowed to modify the database.
 
 Usage
 --------
