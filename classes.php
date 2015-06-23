@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @file
  *   Test Framework for Drupal based on PHPUnit.
  *
@@ -15,11 +15,54 @@
  *     - Unlikely: Instead of DB restore, clone as per http://drupal.org/node/666956.
  *     - error() could log $caller info.
  *     - Fix verbose().
- *     - Fix random test failures.
  *     - Split into separate class files and add autoloader for upal.
- *     - Compare speed versus simpletest.
- *     - move upal_init() to a class thats called early in the suite.
  */
+
+trait DrupalBootstrap {
+  static $database_dump;
+
+  public static function bootstrap($phase = 7) {
+    drupal_bootstrap($phase);
+    restore_error_handler();
+    restore_exception_handler();
+  }
+
+  public static function backupDatabase() {
+    self::$database_dump = self::directory_cache('db_dumps') . '/' .
+      basename(conf_path()) . '-' . REQUEST_TIME . '.sql';
+
+    if (!file_exists(self::$database_dump)) {
+      $cmd = sprintf('%s sql-dump --uri=%s --root=%s --result-file=%s',
+             UNISH_DRUSH, UPAL_WEB_URL, UPAL_ROOT, self::$database_dump);
+      exec($cmd, $output, $return);
+      if ($return) {
+        echo "Failed to create database backup.\n";
+        echo $output;
+        exit(1);
+      }
+    }
+  }
+
+  public static function restoreDatabase() {
+    $cmd = sprintf('`%s sql-connect --uri=%s --root=%s` < %s',
+           UNISH_DRUSH, UPAL_WEB_URL, UPAL_ROOT, self::$database_dump);
+    exec($cmd, $output, $return);
+    if ($return) {
+      echo "Failed to restore the database backup.\n";
+      echo $output;
+      exit(1);
+    }
+
+  }
+
+  static function directory_cache($subdir = '') {
+    $dir = UPAL_TMP . '/' . $subdir;
+    if (!file_exists($dir)) {
+      drupal_mkdir($dir, NULL, TRUE);
+    }
+    return $dir;
+  }
+}
 
 /*
  * @todo: Perhaps move these annotations down to the instance classes and tests.
@@ -27,7 +70,8 @@
  * @runTestsInSeparateProcess
  * @preserveGlobalState disabled
  */
-abstract class DrupalTestCase extends PHPUnit_Framework_TestCase {
+abstract class DrupalTestCase extends \PHPUnit_Framework_TestCase {
+  use DrupalBootstrap;
 
   /**
    * The profile to install as a basis for testing.
@@ -151,7 +195,7 @@ abstract class DrupalTestCase extends PHPUnit_Framework_TestCase {
    */
   protected $redirect_count;
 
-  public function run(PHPUnit_Framework_TestResult $result = NULL) {
+  public function run(\PHPUnit_Framework_TestResult $result = NULL) {
     $this->setPreserveGlobalState(FALSE);
     return parent::run($result);
   }
@@ -2368,134 +2412,32 @@ abstract class DrupalTestCase extends PHPUnit_Framework_TestCase {
       return 'verbose';
     }
   }
-
-  function directory_cache($subdir = '') {
-    $dir = UPAL_TMP . '/' . $subdir;
-    if (!file_exists($dir)) {
-      drupal_mkdir($dir, NULL, TRUE);
-    }
-    return $dir;
-  }
-
-//  function db_url($env) {
-//    return substr(UPAL_DB_URL, 0, 6) == 'sqlite'  ?  "sqlite://sites/$env/files/unish.sqlite" : UPAL_DB_URL . '/unish_' . $env;
-//  }
-
- }
+}
 
 class DrupalUnitTestCase extends DrupalTestCase {
   function setUp() {
-    upal_init();
-    if (!defined("DRUPAL_ROOT")) {
-      define('DRUPAL_ROOT', UPAL_ROOT);
-    }
-
-    require_once DRUPAL_ROOT . '/includes/bootstrap.inc';
-    drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
-  }
-}
-
-class DrupalIntegratedWebTestCase extends DrupalUnitTestCase {
-  protected static $dump = NULL;
-  public function setUp() {
-    parent::setUp();
-    if (!self::$dump) {
-      self::$dump = $this->directory_cache('db_dumps') . '/' . basename(conf_path()) . '-' . REQUEST_TIME . '.sql';
-    }
-    if (!file_exists(self::$dump)) {
-      $cmd = sprintf('%s sql-dump --uri=%s --root=%s --result-file=%s', UNISH_DRUSH, UPAL_WEB_URL, UPAL_ROOT, self::$dump);
-      exec($cmd, $output, $return);
-      if ($return) {
-        echo "Failed to create database backup.\n";
-        echo $output;
-        exit(1);
-      }
-    }
- 
-    // Use the test mail class instead of the default mail handler class.
-    variable_set('mail_system', array('default-system' => 'TestingMailSystem'));
-  }
-  
-  public function tearDown() {
-    $cmd = sprintf('`%s sql-connect --uri=%s --root=%s` < %s', UNISH_DRUSH, UPAL_WEB_URL, UPAL_ROOT, self::$dump);
-    exec($cmd, $output, $return);
-    if ($return) {
-      echo "Failed to restore the database backup.\n";
-      echo $output;
-      exit(1);
-    }
-    parent::tearDown();
+    self::bootstrap();
   }
 }
 
 class DrupalWebTestCase extends DrupalTestCase {
+  protected $backupGlobals = FALSE;
   public function setUp() {
-    upal_init();    
-    if (!defined("DRUPAL_ROOT")) {
-      define('DRUPAL_ROOT', UPAL_ROOT);
-    }
+    self::bootstrap();
 
-    require_once DRUPAL_ROOT . '/includes/bootstrap.inc';
-    drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
-    
     // Use the test mail class instead of the default mail handler class.
-    variable_set('mail_system', array('default-system' => 'TestingMailSystem'));    
+    variable_set('mail_system', array('default-system' => 'TestingMailSystem'));
   }
 }
 
-/*
- * Initialize our environment at the start of each run (i.e. suite).
- */
-function upal_init() {
-  static $has_run = FALSE;
-  if ($has_run) { return; }
-  $has_run = TRUE;
-  // UNISH_DRUSH value can come from phpunit.xml or `which drush`.
-  if (!defined('UNISH_DRUSH')) {
-    // Let the UNISH_DRUSH environment variable override if set.
-    $unish_drush = isset($_SERVER['UNISH_DRUSH']) ? $_SERVER['UNISH_DRUSH'] : NULL;
-    $unish_drush = isset($GLOBALS['UNISH_DRUSH']) ? $GLOBALS['UNISH_DRUSH'] : $unish_drush;
-    if (empty($unish_drush)) {
-      // $unish_drush = Drush_TestCase::is_windows() ? exec('for %i in (drush) do @echo.   %~$PATH:i') : trim(`which drush`);
-      $unish_drush = trim(`which drush`);
-    }
-    define('UNISH_DRUSH', $unish_drush);
+class DrupalIntegratedWebTestCase extends DrupalWebTestCase {
+  public function setUp() {
+    self::backupDatabase();
+    parent::setUp();
   }
 
-  // We read from globals here because env can be empty and ini did not work in quick test.
-  define('UPAL_DB_URL', getenv('UPAL_DB_URL') ? getenv('UPAL_DB_URL') : (!empty($GLOBALS['UPAL_DB_URL']) ? $GLOBALS['UPAL_DB_URL'] : 'mysql://root:@127.0.0.1/upal'));
-
-  // Make sure we use the right Drupal codebase.
-  define('UPAL_ROOT', getenv('UPAL_ROOT') ? getenv('UPAL_ROOT') : (isset($GLOBALS['UPAL_ROOT']) ? $GLOBALS['UPAL_ROOT'] : realpath('.')));
-  chdir(UPAL_ROOT);
-
-  // The URL that browser based tests should use.
-  define('UPAL_WEB_URL', getenv('UPAL_WEB_URL') ? getenv('UPAL_WEB_URL') : (isset($GLOBALS['UPAL_WEB_URL']) ? $GLOBALS['UPAL_WEB_URL'] : 'http://upal'));
-
-  define('UPAL_TMP', getenv('UPAL_TMP') ? getenv('UPAL_TMP') : (isset($GLOBALS['UPAL_TMP']) ? $GLOBALS['UPAL_TMP'] : sys_get_temp_dir()));
-  // define('UNISH_SANDBOX', UNISH_TMP . '/drush-sandbox');
-
-  // Set the env vars that Drupal expects. Largely copied from drush.
-  $url = parse_url(UPAL_WEB_URL);
-
-  if (array_key_exists('path', $url)) {
-    $_SERVER['PHP_SELF'] = $url['path'] . '/index.php';
+  public function tearDown() {
+    parent::tearDown();
+    self::restoreDatabase();
   }
-  else {
-    $_SERVER['PHP_SELF'] = '/index.php';
-  }
-
-  $_SERVER['REQUEST_URI'] = $_SERVER['SCRIPT_NAME'] = $_SERVER['PHP_SELF'];
-  $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
-  $_SERVER['REQUEST_METHOD']  = NULL;
-
-  $_SERVER['SERVER_SOFTWARE'] = NULL;
-  $_SERVER['HTTP_USER_AGENT'] = NULL;
-
-  $_SERVER['HTTP_HOST'] = $url['host'];
-  $_SERVER['SERVER_PORT'] = array_key_exists('port', $url) ? $url['port'] : NULL;
 }
-
- // This code is in global scope.
- // TODO: I would rather this code at top of file, but I get Fatal error: Class 'Drush_TestCase' not found
-// upal_init();
