@@ -13,12 +13,12 @@ Site example.dev is cloned as site example.test, and the test suite is triggered
 - Unlike the SUT Drupal Test Suite that has to do expensive and time consuming preparing of variables like (enabled modules, enabled features)
 because we went with ACS. We dont have to waste valuable stakeholder time.
 
-c.) Primary Use Case is d7, its my day to day work.
+c.) Primary Use Case is D7, its my day to day work.
 
 Usage
 --------
-- Install PHPUnit (see below) and Drush (http://drupal.org/project/drush).
-- Checkout or download a core Drupal that is to be tested (only tested with 8.x).
+- Install PHPUnit (https://phpunit.de/manual/current/en/installation.html) and Drush (http://drupal.org/project/drush).
+- Checkout or download a core Drupal that is to be tested (only tested with 7.x).
   -- Map http://upal to this Drupal in your web server config. If not possible,
      configure UPAL_WEB_URL in phpunit.xml (see Notes).
   -- Create an 'upal' database on your database server.
@@ -31,25 +31,3 @@ Usage
 Notes
 ----------
 - If customization is needed as per above, Copy phpunit.xml.dist to phpunit.xml and edit.
-
-Install PHPUnit
-----------------
-
-Upal requires PHPUnit 3.5 or later; installing with PEAR is easiest.
-
-- On Linux/OSX:
-  sudo apt-get install php5-curl php-pear
-  sudo pear upgrade --force PEAR
-  sudo pear channel-discover pear.phpunit.de
-  sudo pear channel-discover components.ez.no
-  sudo pear channel-discover pear.symfony-project.com
-  sudo pear install --alldeps phpunit/PHPUnit
-
-- On Windows:
-Download and save from go-pear.phar http://pear.php.net/go-pear.phar
-
-  php -q go-pear.phar
-  pear channel-discover pear.phpunit.de
-  pear channel-discover components.ez.no
-  pear channel-discover pear.symfony-project.com
-  pear install --alldeps phpunit/PHPUnit
