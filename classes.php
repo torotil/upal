@@ -18,7 +18,7 @@
  *     - Split into separate class files and add autoloader for upal.
  */
 
-trait DrupalBootstrap {
+class DrupalBootstrap {
   static $database_dump;
 
   public static function bootstrap($phase = 7) {
@@ -71,7 +71,6 @@ trait DrupalBootstrap {
  * @preserveGlobalState disabled
  */
 abstract class DrupalTestCase extends \PHPUnit_Framework_TestCase {
-  use DrupalBootstrap;
 
   /**
    * The profile to install as a basis for testing.
@@ -2416,14 +2415,14 @@ abstract class DrupalTestCase extends \PHPUnit_Framework_TestCase {
 
 class DrupalUnitTestCase extends DrupalTestCase {
   function setUp() {
-    self::bootstrap();
+    DrupalBootstrap::bootstrap();
   }
 }
 
 class DrupalWebTestCase extends DrupalTestCase {
   protected $backupGlobals = FALSE;
   public function setUp() {
-    self::bootstrap();
+    DrupalBootstrap::bootstrap();
 
     // Use the test mail class instead of the default mail handler class.
     variable_set('mail_system', array('default-system' => 'TestingMailSystem'));
@@ -2432,12 +2431,12 @@ class DrupalWebTestCase extends DrupalTestCase {
 
 class DrupalIntegratedWebTestCase extends DrupalWebTestCase {
   public function setUp() {
-    self::backupDatabase();
+    DrupalBootstrap::backupDatabase();
     parent::setUp();
   }
 
   public function tearDown() {
     parent::tearDown();
-    self::restoreDatabase();
+    DrupalBootstrap::restoreDatabase();
   }
 }

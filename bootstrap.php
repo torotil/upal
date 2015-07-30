@@ -57,7 +57,7 @@ function upal_init() {
     define('DRUPAL_ROOT', UPAL_ROOT);
   }
   require_once DRUPAL_ROOT . '/includes/bootstrap.inc';
-  DrupalTestCase::bootstrap(DRUPAL_BOOTSTRAP_VARIABLES);
+  DrupalBootstrap::bootstrap(DRUPAL_BOOTSTRAP_VARIABLES);
 }
 
 // Immediately bootstrap so that tests can use autoloader modules.
