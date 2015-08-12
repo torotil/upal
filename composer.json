@@ -1,8 +1,8 @@
 {
   "name": "betterweekdays/upal",
-  "description": "PHPUnit integeratino for Drupal",
+  "description": "PHPUnit integeration for Drupal",
   "minimum-stability": "dev",
-  "homepage": "https://github.com/indytechcook/upal",
+  "homepage": "https://github.com/betterweekdays/upal",
   "license": "GPL-2.0+",
   "authors": [
     {
