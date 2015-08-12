@@ -1,8 +1,8 @@
-A group of classes used to help run tests using PHPUnit in Drupal.  This
+A group of classes used to help run tests using PHPUnit in Drupal.
 
 upal assumes that tests are allowed to modify the database.
 
-##Usage
+## Usage
 
 - Install PHPUnit (https://phpunit.de/manual/current/en/installation.html) and Drush (http://drupal.org/project/drush).
 - Checkout or download a core Drupal that is to be tested (only tested with 7.x).
