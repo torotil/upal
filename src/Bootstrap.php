@@ -3,11 +3,12 @@
 namespace Upal;
 
 class Bootstrap {
+  static $has_run = FALSE;
+
   /**
    * @var \Upal\Config
    */
   protected $config;
-  protected $has_run = FALSE;
 
   /**
    * Construct the object.
@@ -21,11 +22,11 @@ class Bootstrap {
   }
   
   public function setUp() {
-    if ($this->has_run) {
+    if (self::$has_run) {
       return;
     }
 
-    $this->has_run = TRUE;
+    self::$has_run = TRUE;
 
     // Set the env vars that Drupal expects. Largely copied from drush.
     $url = parse_url($this->config->get('web_url'));
@@ -50,6 +51,11 @@ class Bootstrap {
     set_include_path($this->config->get('root') . PATH_SEPARATOR . get_include_path());
 
     define('DRUPAL_ROOT', $this->config->get('drupal_root'));
+    define('UNISH_DRUSH', $this->config->get('drush'));
+    define('UPAL_WEB_URL', $this->config->get('web_url'));
+    define('UPAL_ROOT', $this->config->get('root'));
+    define('UPAL_TMP', $this->config->get('tmp'));
+    define('UPAL_DB_URL', $this->config->get('db_url'));
 
     require_once DRUPAL_ROOT . '/includes/bootstrap.inc';
     DrupalBootstrap::bootstrap(DRUPAL_BOOTSTRAP_VARIABLES);
