@@ -15,7 +15,7 @@
       "Upal\\": "src/"
     }
   },
-  "require": {
-    "hassankhan/config": "dev-master"
+  "require-dev": {
+    "hassankhan/config": "0.8.2"
   }
 }
