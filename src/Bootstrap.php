@@ -3,34 +3,32 @@
 namespace Upal;
 
 class Bootstrap {
-  public static function init() {
-    $define = function($name, $default) {
-      define($name, getenv($name)
-        ? getenv($name)
-        : (!empty($GLOBALS[$name])
-          ? $GLOBALS[$name]
-          : $default));
-    };
+  /**
+   * @var \Upal\Config
+   */
+  protected $config;
+  protected $has_run = FALSE;
 
-    static $has_run = FALSE;
-    if ($has_run) { return; }
-    $has_run = TRUE;
+  /**
+   * Construct the object.
+   *
+   * Keeping it simple with an array.
+   *
+   * @param Config $config
+   */
+  public function __construct(Config $config) {
+    $this->config = $config;
+  }
+  
+  public function setUp() {
+    if ($this->has_run) {
+      return;
+    }
 
-    $define('UNISH_DRUSH', trim(`which drush`));
-
-    // We read from globals here because env can be empty and ini did not work in quick test.
-    $define('UPAL_DB_URL', 'mysql://root:@127.0.0.1/upal');
-
-    // Make sure we use the right Drupal codebase.
-    $define('UPAL_ROOT', realpath('.'));
-
-    // The URL that browser based tests should use.
-    $define('UPAL_WEB_URL', 'http://upal');
-
-    $define('UPAL_TMP', sys_get_temp_dir());
+    $this->has_run = TRUE;
 
     // Set the env vars that Drupal expects. Largely copied from drush.
-    $url = parse_url(UPAL_WEB_URL);
+    $url = parse_url($this->config->get('web_url'));
 
     if (array_key_exists('path', $url)) {
       $_SERVER['PHP_SELF'] = $url['path'] . '/index.php';
@@ -49,11 +47,10 @@ class Bootstrap {
     $_SERVER['HTTP_HOST'] = $url['host'];
     $_SERVER['SERVER_PORT'] = array_key_exists('port', $url) ? $url['port'] : NULL;
 
-    set_include_path(UPAL_ROOT . PATH_SEPARATOR . get_include_path());
+    set_include_path($this->config->get('root') . PATH_SEPARATOR . get_include_path());
 
-    if (!defined("DRUPAL_ROOT")) {
-      define('DRUPAL_ROOT', UPAL_ROOT);
-    }
+    define('DRUPAL_ROOT', $this->config->get('drupal_root'));
+
     require_once DRUPAL_ROOT . '/includes/bootstrap.inc';
     DrupalBootstrap::bootstrap(DRUPAL_BOOTSTRAP_VARIABLES);
   }
