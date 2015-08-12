@@ -2,11 +2,17 @@
   "name": "indytechcook/upal",
   "description": "PHPUnit integeratino for Drupal",
   "minimum-stability": "dev",
-  "license": "GPL",
+  "homepage": "https://github.com/indytechcook/upal",
+  "license": "GPL-2.0+",
   "authors": [
     {
       "name": "Neil Hastings",
       "email": "neil.hastings@gmail.com"
     }
-  ]
+  ],
+  "autoload": {
+    "psr-4": {
+      "Upal": "src/"
+    }
+  }
 }
