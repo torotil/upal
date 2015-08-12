@@ -48,8 +48,6 @@ class Bootstrap {
     $_SERVER['HTTP_HOST'] = $url['host'];
     $_SERVER['SERVER_PORT'] = array_key_exists('port', $url) ? $url['port'] : NULL;
 
-    set_include_path($this->config->get('root') . PATH_SEPARATOR . get_include_path());
-
     define('DRUPAL_ROOT', $this->config->get('drupal_root'));
     define('UNISH_DRUSH', $this->config->get('drush'));
     define('UPAL_WEB_URL', $this->config->get('web_url'));
