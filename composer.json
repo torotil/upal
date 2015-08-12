@@ -1,0 +1,12 @@
+{
+  "name": "indytechcook/upal",
+  "description": "PHPUnit integeratino for Drupal",
+  "minimum-stability": "dev",
+  "license": "GPL",
+  "authors": [
+    {
+      "name": "Neil Hastings",
+      "email": "neil.hastings@gmail.com"
+    }
+  ]
+}
