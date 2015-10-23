@@ -26,7 +26,6 @@ $bootstrap->setUp();
 ### Config Defaults
 
 * drush => trim(`which drush`)
-* db_url => 'mysql://root:@127.0.0.1/upal'
 * root => realpath('.')
 * web_url => 'http://upal'
 * tmp => sys_get_temp_dir()

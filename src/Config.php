@@ -32,10 +32,10 @@ class Config extends ParentConfig {
   protected function getDefaults() {
     return [
       'drush' => trim(`which drush`),
-      'db_url' => 'mysql://root:@127.0.0.1/upal',
       'web_url' => 'http://upal',
       'tmp' => sys_get_temp_dir(),
       'drupal_root' => realpath('.'),
+      'drush_alias' => ''
     ];
   }
 

@@ -20,7 +20,7 @@ class Bootstrap {
   public function __construct(Config $config) {
     $this->config = $config;
   }
-  
+
   public function setUp() {
     if (self::$has_run) {
       return;
@@ -53,7 +53,6 @@ class Bootstrap {
     define('UPAL_WEB_URL', $this->config->get('web_url'));
     define('UPAL_ROOT', $this->config->get('root'));
     define('UPAL_TMP', $this->config->get('tmp'));
-    define('UPAL_DB_URL', $this->config->get('db_url'));
 
     require_once DRUPAL_ROOT . '/includes/bootstrap.inc';
     DrupalBootstrap::bootstrap(DRUPAL_BOOTSTRAP_VARIABLES);
