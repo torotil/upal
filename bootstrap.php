@@ -56,8 +56,11 @@ function upal_init() {
   if (!defined("DRUPAL_ROOT")) {
     define('DRUPAL_ROOT', UPAL_ROOT);
   }
+  $old_dir = getcwd();
+  chdir(DRUPAL_ROOT);
   require_once DRUPAL_ROOT . '/includes/bootstrap.inc';
-  DrupalBootstrap::bootstrap(DRUPAL_BOOTSTRAP_VARIABLES);
+  DrupalBootstrap::bootstrap(DRUPAL_BOOTSTRAP_FULL);
+  chdir($old_dir);
 }
 
 // Immediately bootstrap so that tests can use autoloader modules.
