@@ -50,6 +50,9 @@ function upal_init() {
 
   $_SERVER['HTTP_HOST'] = $url['host'];
   $_SERVER['SERVER_PORT'] = array_key_exists('port', $url) ? $url['port'] : NULL;
+  if ($_SERVER['SERVER_PORT']) {
+    $_SERVER['HTTP_HOST'] .= ':' . $_SERVER['SERVER_PORT'];
+  }
 
   set_include_path(UPAL_ROOT . PATH_SEPARATOR . get_include_path());
 
