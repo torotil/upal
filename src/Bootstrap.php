@@ -2,6 +2,9 @@
 
 namespace Upal;
 
+class_alias(DrupalUnitTestCase::class, 'DrupalUnitTestCase');
+class_alias(DrupalWebTestCase::class, 'DrupalWebTestCase');
+
 class Bootstrap {
   static $has_run = FALSE;
 
