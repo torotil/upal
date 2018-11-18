@@ -10,8 +10,6 @@ class DrupalBootstrap {
     $old_dir = getcwd();
     chdir(UPAL_ROOT);
     drupal_bootstrap($phase);
-    restore_error_handler();
-    restore_exception_handler();
     chdir($old_dir);
   }
 

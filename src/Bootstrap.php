@@ -51,14 +51,16 @@ class Bootstrap {
       $_SERVER['HTTP_HOST'] .= ':' . $_SERVER['SERVER_PORT'];
     }
 
-    define('DRUPAL_ROOT', $this->config->get('drupal_root'));
     define('UNISH_DRUSH', $this->config->get('drush'));
     define('UPAL_WEB_URL', $this->config->get('web_url'));
-    define('UPAL_ROOT', $this->config->get('root'));
+    define('UPAL_ROOT', $this->config->get('drupal_root'));
     define('UPAL_TMP', $this->config->get('tmp'));
 
+    define('DRUPAL_ROOT', UPAL_ROOT);
     require_once DRUPAL_ROOT . '/includes/bootstrap.inc';
     DrupalBootstrap::bootstrap(DRUPAL_BOOTSTRAP_CONFIGURATION);
+    restore_error_handler();
+    restore_exception_handler();
   }
 
 }
