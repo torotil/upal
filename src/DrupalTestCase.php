@@ -1,22 +1,6 @@
 <?php
 
-/**
- * @file
- *   Test Framework for Drupal based on PHPUnit.
- *
- *   @todo
- *     - Simpletest's assertFalse casts to boolean whereas PHPUnit requires boolean. See testSiteWideContact().
- *     - hard coded TRUE at end of drupalLogin() because PHPUnit doesn't return
- *       anything from an assertion (unlike simpletest). Even if we fix drupalLogin(),
- *       we have to fix this to get 100% compatibility with simpletest.
- *     - setUp() only resets DB for mysql. Probably should use Drush and thus
- *       support postgres and sqlite easily. That buys us auto creation of upal DB
- *       as well.
- *     - Unlikely: Instead of DB restore, clone as per http://drupal.org/node/666956.
- *     - error() could log $caller info.
- *     - Fix verbose().
- *     - Split into separate class files and add autoloader for upal.
- */
+namespace Upal;
 
 // Forward compatibility with PHPUnit 6.
 if (!class_exists('PHPUnit_Runner_Version', TRUE)) {
@@ -24,58 +8,6 @@ if (!class_exists('PHPUnit_Runner_Version', TRUE)) {
   class_alias('PHPUnit\\Framework\\TestResult', 'PHPUnit_Framework_TestResult');
 }
 
-class DrupalBootstrap {
-  static $database_dump;
-
-  public static function bootstrap($phase = 7) {
-    drupal_bootstrap($phase);
-    restore_error_handler();
-    restore_exception_handler();
-  }
-
-  public static function backupDatabase() {
-    self::$database_dump = self::directory_cache('db_dumps') . '/' .
-      basename(conf_path()) . '-' . REQUEST_TIME . '.sql';
-
-    if (!file_exists(self::$database_dump)) {
-      $cmd = sprintf('%s sql-dump --uri=%s --root=%s --result-file=%s',
-             UNISH_DRUSH, UPAL_WEB_URL, UPAL_ROOT, self::$database_dump);
-      exec($cmd, $output, $return);
-      if ($return) {
-        echo "Failed to create database backup.\n";
-        echo $output;
-        exit(1);
-      }
-    }
-  }
-
-  public static function restoreDatabase() {
-    $cmd = sprintf('`%s sql-connect --uri=%s --root=%s` < %s',
-           UNISH_DRUSH, UPAL_WEB_URL, UPAL_ROOT, self::$database_dump);
-    exec($cmd, $output, $return);
-    if ($return) {
-      echo "Failed to restore the database backup.\n";
-      echo $output;
-      exit(1);
-    }
-
-  }
-
-  static function directory_cache($subdir = '') {
-    $dir = UPAL_TMP . '/' . $subdir;
-    if (!file_exists($dir)) {
-      drupal_mkdir($dir, NULL, TRUE);
-    }
-    return $dir;
-  }
-}
-
-/*
- * @todo: Perhaps move these annotations down to the instance classes and tests.
- *
- * @runTestsInSeparateProcess
- * @preserveGlobalState disabled
- */
 abstract class DrupalTestCase extends \PHPUnit_Framework_TestCase {
 
   /**
@@ -1252,8 +1184,8 @@ abstract class DrupalTestCase extends \PHPUnit_Framework_TestCase {
       $out = $new;
     }
     $this->verbose('GET request to: ' . $path .
-                   '<hr />Ending URL: ' . $this->getUrl() .
-                   '<hr />' . $out);
+      '<hr />Ending URL: ' . $this->getUrl() .
+      '<hr />' . $out);
     return $out;
   }
 
@@ -1596,9 +1528,9 @@ abstract class DrupalTestCase extends \PHPUnit_Framework_TestCase {
             $out = $new;
           }
           $this->verbose('POST request to: ' . $path .
-                         '<hr />Ending URL: ' . $this->getUrl() .
-                         '<hr />Fields: ' . highlight_string('<?php ' . var_export($post_array, TRUE), TRUE) .
-                         '<hr />' . $out);
+            '<hr />Ending URL: ' . $this->getUrl() .
+            '<hr />Fields: ' . highlight_string('<?php ' . var_export($post_array, TRUE), TRUE) .
+            '<hr />' . $out);
           return $out;
         }
       }
@@ -2211,7 +2143,7 @@ abstract class DrupalTestCase extends \PHPUnit_Framework_TestCase {
             if (!isset($element['checked'])) {
               break;
             }
-            // Deliberate no break.
+          // Deliberate no break.
           default:
             $post[$name] = $value;
         }
@@ -2416,33 +2348,5 @@ abstract class DrupalTestCase extends \PHPUnit_Framework_TestCase {
     elseif (in_array('--verbose', $_SERVER['argv'])) {
       return 'verbose';
     }
-  }
-}
-
-class DrupalUnitTestCase extends DrupalTestCase {
-  function setUp() {
-    DrupalBootstrap::bootstrap();
-  }
-}
-
-class DrupalWebTestCase extends DrupalTestCase {
-  protected $backupGlobals = FALSE;
-  public function setUp() {
-    DrupalBootstrap::bootstrap();
-
-    // Use the test mail class instead of the default mail handler class.
-    variable_set('mail_system', array('default-system' => 'TestingMailSystem'));
-  }
-}
-
-class DrupalIntegratedWebTestCase extends DrupalWebTestCase {
-  public function setUp() {
-    DrupalBootstrap::backupDatabase();
-    parent::setUp();
-  }
-
-  public function tearDown() {
-    parent::tearDown();
-    DrupalBootstrap::restoreDatabase();
   }
 }
