@@ -2,6 +2,11 @@
 
 namespace Upal;
 
+// Forward compatibility with PHPUnit 6.
+if (!class_exists('PHPUnit_Runner_Version', TRUE)) {
+  class_alias('PHPUnit\\Framework\\TestCase', 'PHPUnit_Framework_TestCase');
+  class_alias('PHPUnit\\Framework\\TestResult', 'PHPUnit_Framework_TestResult');
+}
 
 abstract class DrupalTestCase extends \PHPUnit_Framework_TestCase {
 

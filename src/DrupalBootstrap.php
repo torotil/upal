@@ -7,9 +7,12 @@ class DrupalBootstrap {
   static $database_dump;
 
   public static function bootstrap($phase = 7) {
+    $old_dir = getcwd();
+    chdir(UPAL_ROOT);
     drupal_bootstrap($phase);
     restore_error_handler();
     restore_exception_handler();
+    chdir($old_dir);
   }
 
   public static function backupDatabase() {

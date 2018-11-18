@@ -2,12 +2,16 @@
   "name": "betterweekdays/upal",
   "description": "PHPUnit integeration for Drupal",
   "minimum-stability": "dev",
-  "homepage": "https://github.com/betterweekdays/upal",
+  "homepage": "https://github.com/torotil/upal",
   "license": "GPL-2.0+",
   "authors": [
     {
       "name": "Neil Hastings",
       "email": "neil.hastings@gmail.com"
+    },
+    {
+      "name": "Roman Zimmermann",
+      "email": "torotil@gmail.com"
     }
   ],
   "autoload": {
