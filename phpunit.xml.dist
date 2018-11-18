@@ -2,7 +2,8 @@
 <phpunit backupGlobals="false"
     backupStaticAttributes="false"
     syntaxCheck="false"
-    strict="true">
+    strict="true"
+    bootstrap="test/bootstrap.php">
 
 <filter>
   <whitelist processUncoveredFilesFromWhitelist="true" addUncoveredFilesFromWhitelist="true">

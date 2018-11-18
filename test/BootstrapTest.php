@@ -24,4 +24,14 @@ class BootstrapTest extends DrupalUnitTestCase {
     trigger_error('Test warning', E_USER_WARNING);
   }
 
+  /**
+   * Test include path.
+   *
+   * Some rely on DRUPAL_ROOT being in the include_path.
+   */
+  public function testIncludePath() {
+    include_once drupal_get_path('module', 'block') . '/block.admin.inc';
+    $this->assertTrue(function_exists('block_admin_demo'));
+  }
+
 }

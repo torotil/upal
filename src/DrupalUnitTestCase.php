@@ -5,11 +5,11 @@ namespace Upal;
 
 class DrupalUnitTestCase extends DrupalTestCase {
 
+  /**
+   * Do a full bootstrap of the site.
+   */
   function setUp() {
-    echo __FUNCTION__ . "\n";
-    echo "Starting full bootstrap.\n";
     drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
-    echo "Bootstrap full done.\n";
   }
 
 }

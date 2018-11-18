@@ -58,6 +58,8 @@ class Bootstrap {
 
     define('DRUPAL_ROOT', UPAL_ROOT);
     require_once DRUPAL_ROOT . '/includes/bootstrap.inc';
+    // Some modules rely on this.
+    set_include_path(DRUPAL_ROOT . PATH_SEPARATOR . get_include_path());
     DrupalBootstrap::bootstrap(DRUPAL_BOOTSTRAP_CONFIGURATION);
     restore_error_handler();
     restore_exception_handler();
