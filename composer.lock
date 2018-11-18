@@ -1,35 +1,37 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "c58ad73a899dcb950a690a60b7a48cf5",
+    "hash": "590d264deb1fdbb7a9adcd0ab258f628",
+    "content-hash": "cdc58d28daa18c42a13876c94784c152",
     "packages": [
         {
             "name": "hassankhan/config",
-            "version": "dev-master",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hassankhan/config.git",
-                "reference": "e72f5c07c410a1d453eb5aeb3bf6b1c09f431cba"
+                "reference": "930556337783acfd95bde723354119178db01d10"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hassankhan/config/zipball/e72f5c07c410a1d453eb5aeb3bf6b1c09f431cba",
-                "reference": "e72f5c07c410a1d453eb5aeb3bf6b1c09f431cba",
+                "url": "https://api.github.com/repos/hassankhan/config/zipball/930556337783acfd95bde723354119178db01d10",
+                "reference": "930556337783acfd95bde723354119178db01d10",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.0"
+                "php": ">=5.5.9"
             },
             "require-dev": {
                 "phpunit/phpunit": "~4.0",
                 "scrutinizer/ocular": "~1.1",
-                "squizlabs/php_codesniffer": "~2.2"
+                "squizlabs/php_codesniffer": "~2.2",
+                "symfony/yaml": "~3.4"
             },
             "suggest": {
-                "symfony/yaml": "~2.5"
+                "symfony/yaml": "~3.4"
             },
             "type": "library",
             "autoload": {
@@ -61,17 +63,17 @@
                 "yaml",
                 "yml"
             ],
-            "time": "2015-07-27 16:39:15"
+            "time": "2018-08-22 14:18:52"
         }
     ],
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "hassankhan/config": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "php": ">=5.3.0"
+    },
     "platform-dev": []
 }
