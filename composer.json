@@ -16,8 +16,7 @@
   ],
   "autoload": {
     "psr-4": {
-      "Upal\\": "src/",
-      "Upal\\test\\": "test/"
+      "Upal\\": "src/"
     }
   },
   "require": {

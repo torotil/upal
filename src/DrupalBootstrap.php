@@ -50,9 +50,6 @@ class DrupalBootstrap {
     DrupalBootstrap::bootstrap(DRUPAL_BOOTSTRAP_CONFIGURATION);
     restore_error_handler();
     restore_exception_handler();
-
-    class_alias(DrupalUnitTestCase::class, 'DrupalUnitTestCase');
-    class_alias(DrupalWebTestCase::class, 'DrupalWebTestCase');
   }
 
   public static function bootstrap($phase = 7) {
