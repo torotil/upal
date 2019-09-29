@@ -34,4 +34,13 @@ class BootstrapTest extends DrupalUnitTestCase {
     $this->assertTrue(function_exists('block_admin_demo'));
   }
 
+  /**
+   * Test that the current working directory is DRUPAL_ROOT.
+   *
+   * Some modules seems to expect this (ie. libraries).
+   */
+  public function testCwd() {
+    $this->assertEquals(DRUPAL_ROOT, getcwd());
+  }
+
 }
