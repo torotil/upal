@@ -11,4 +11,4 @@ class_alias(DrupalUnitTestCase::class, 'DrupalUnitTestCase');
 class_alias(DrupalWebTestCase::class, 'DrupalWebTestCase');
 
 // Some tests use module_load_include() in global scope.
-DrupalBootstrap::bootstrap(3);
+DrupalBootstrap::bootstrap(4);
