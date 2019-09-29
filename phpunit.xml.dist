@@ -3,7 +3,7 @@
     backupStaticAttributes="false"
     syntaxCheck="false"
     strict="true"
-    bootstrap="vendor/autoload.php">
+    bootstrap="bootstrap.php">
 
 <filter>
   <whitelist processUncoveredFilesFromWhitelist="true" addUncoveredFilesFromWhitelist="true">
