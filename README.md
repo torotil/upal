@@ -7,6 +7,7 @@ upal assumes that tests are allowed to modify the database.
 - Install PHPUnit (https://phpunit.de/manual/current/en/installation.html) and Drush (http://drupal.org/project/drush).
 - Checkout or download a core Drupal that is to be tested (only tested with 7.x).
 - Use any of `Upal\*TestCase` classes as base-class for your tests.
+- With PHP7.2+ you need a bootstrap script that bootstraps at least to level 4, ie. calls `\Upal\DrupalBootstrap::bootstrap(4)`.
 
 ## Configuration
 
