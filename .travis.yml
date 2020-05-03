@@ -1,8 +1,9 @@
 language: php
-
+services:
+  - mysql
 php:
-  - 7.0
-
+  - 7.1
+  - 7.3
 mysql:
   database: drupal
   username: root
@@ -25,7 +26,7 @@ before_script:
   - php -d include_path=`pwd` -d sendmail_path=`which true` ~/.composer/vendor/bin/drush.php --yes core-quick-drupal --core=drupal-7.x --profile=testing --no-server --db-url=mysql://root:@127.0.0.1/drupal --root=$root
 
 script:
-  - UPAL_ROOT=$root UPAL_WEB_URL=http://127.0.0.1 ~/.composer/vendor/bin/phpunit --coverage-clover=coverage.xml test
+  - UPAL_ROOT=$root UPAL_WEB_URL=http://127.0.0.1 phpunit --coverage-clover=coverage.xml test
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
