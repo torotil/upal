@@ -43,4 +43,13 @@ class BootstrapTest extends DrupalUnitTestCase {
     $this->assertEquals(DRUPAL_ROOT, getcwd());
   }
 
+  /**
+   * Test that module_hook_info() works as expected.
+   */
+  public function testModuleHookInfo() {
+    $info = module_hook_info();
+    // It should include info defined in system_hook_info().
+    $this->assertEqual(['group' => 'tokens'], $info['token_info']);
+  }
+
 }
