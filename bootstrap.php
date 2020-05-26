@@ -12,5 +12,8 @@ namespace Upal;
 class_alias(DrupalUnitTestCase::class, 'DrupalUnitTestCase');
 class_alias(DrupalWebTestCase::class, 'DrupalWebTestCase');
 
-// Some tests use module_load_include() in global scope.
-DrupalBootstrap::bootstrap(4);
+// Codecoverage includes all files it can find before any test is executed.
+// This means autoloading needs to already work at that stages. Unless we
+// assume that autoloading works even for modules that haven’t been loaded
+// yet we need a full bootstrap.
+DrupalBootstrap::bootstrap(7);
