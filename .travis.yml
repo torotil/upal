@@ -4,10 +4,9 @@ services:
 php:
   - 7.1
   - 7.3
-mysql:
-  database: drupal
-  username: root
-  encoding: utf8
+
+env:
+  COMPOSER_HOME=$HOME/.config/composer
 
 cache:
   directories:
@@ -15,18 +14,18 @@ cache:
      - $HOME/.drush/cache
 
 install:
-  - export PATH="$HOME/.composer/vendor/bin:$PATH"
-  - composer global require drush/drush:8.1.* phpunit/phpunit:6.4.*
+  - export PATH="$COMPOSER_HOME/vendor/bin:$PATH"
+  - composer global require drush/drush:8.1.* phpunit/phpunit:8.*
   - composer install
 
 before_script:
   - repo=`pwd`
   - root=$HOME/test-root
   - mysql -e 'create database drupal'
-  - php -d include_path=`pwd` -d sendmail_path=`which true` ~/.composer/vendor/bin/drush.php --yes core-quick-drupal --core=drupal-7.x --profile=testing --no-server --db-url=mysql://root:@127.0.0.1/drupal --root=$root
+  - php -d include_path=`pwd` -d sendmail_path=`which true` $COMPOSER_HOME/vendor/bin/drush.php --yes core-quick-drupal --core=drupal-7.x --profile=testing --no-server --db-url=mysql://root:@127.0.0.1/drupal --root=$root
 
 script:
-  - UPAL_ROOT=$root UPAL_WEB_URL=http://127.0.0.1 phpunit --coverage-clover=coverage.xml test
+  - UPAL_ROOT=$root UPAL_WEB_URL=http://127.0.0.1 XDEBUG_MODE=coverage phpunit --coverage-clover=coverage.xml test
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
