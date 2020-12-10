@@ -21,6 +21,7 @@
   },
   "require": {
     "php": ">=7.0",
-    "hassankhan/config": "1.1.0"
+    "hassankhan/config": "1.1.0",
+    "phpunit/phpunit": ">=6.0"
   }
 }

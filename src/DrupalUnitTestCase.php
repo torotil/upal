@@ -8,7 +8,7 @@ class DrupalUnitTestCase extends DrupalTestCase {
   /**
    * Do a full bootstrap of the site.
    */
-  public function setUp() {
+  public function setUp() : void {
     DrupalBootstrap::bootstrap();
     $this->oldCwd = getcwd();
     chdir(DRUPAL_ROOT);
@@ -17,7 +17,7 @@ class DrupalUnitTestCase extends DrupalTestCase {
   /**
    * Reset the current working directory.
    */
-  public function tearDown() {
+  public function tearDown() : void {
     chdir($this->oldCwd);
   }
 

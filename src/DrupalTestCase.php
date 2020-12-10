@@ -2,13 +2,10 @@
 
 namespace Upal;
 
-// Forward compatibility with PHPUnit 6.
-if (!class_exists('PHPUnit_Runner_Version', TRUE)) {
-  class_alias('PHPUnit\\Framework\\TestCase', 'PHPUnit_Framework_TestCase');
-  class_alias('PHPUnit\\Framework\\TestResult', 'PHPUnit_Framework_TestResult');
-}
+use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\TestResult;
 
-abstract class DrupalTestCase extends \PHPUnit_Framework_TestCase {
+abstract class DrupalTestCase extends TestCase {
 
   /**
    * The profile to install as a basis for testing.
@@ -132,7 +129,7 @@ abstract class DrupalTestCase extends \PHPUnit_Framework_TestCase {
    */
   protected $redirect_count;
 
-  public function run(\PHPUnit_Framework_TestResult $result = NULL) {
+  public function run(TestResult $result = NULL) : TestResult {
     $this->setPreserveGlobalState(FALSE);
     return parent::run($result);
   }
